@@ -33,6 +33,23 @@ class DeepSeekChatApp:
 
         # Create GUI elements
         self.create_widgets()
+        self.create_status_bar()
+
+    def create_status_bar(self):
+        # Status bar at bottom
+        self.status_frame = ttk.Frame(self.root)
+        self.status_frame.grid(row=2, column=0, columnspan=2, sticky="ew", padx=5, pady=2)
+
+        # Progress bar
+        self.progress_bar = ttk.Progressbar(
+            self.status_frame, mode='determinate', length=100
+        )
+        self.progress_bar.pack(side=tk.LEFT, padx=5, fill=tk.X, expand=True)
+
+        # Status label
+        self.status_var = tk.StringVar(value="Ready")
+        self.status_label = ttk.Label(self.status_frame, textvariable=self.status_var)
+        self.status_label.pack(side=tk.RIGHT, padx=5)
 
     def create_widgets(self):
         # Configure grid layout
@@ -45,13 +62,11 @@ class DeepSeekChatApp:
         self.toolbar_frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=2, pady=2)
 
         # Toolbar Elements
-        # Export/Load buttons
         self.export_btn = ttk.Button(self.toolbar_frame, text="Export Session", command=self.export_session)
         self.export_btn.pack(side=tk.LEFT, padx=2)
         self.load_btn = ttk.Button(self.toolbar_frame, text="Load Session", command=self.load_session)
         self.load_btn.pack(side=tk.LEFT, padx=2)
 
-        # Font Selection
         ttk.Label(self.toolbar_frame, text="Font:").pack(side=tk.LEFT, padx=(10, 2))
         self.font_var = tk.StringVar(value="Arial")
         self.font_combo = ttk.Combobox(
@@ -64,7 +79,6 @@ class DeepSeekChatApp:
         self.font_combo.pack(side=tk.LEFT)
         self.font_combo.bind("<<ComboboxSelected>>", self.change_font)
 
-        # Context Checkbox
         self.use_context_var = tk.BooleanVar()
         self.context_check = ttk.Checkbutton(
             self.toolbar_frame,
@@ -79,7 +93,6 @@ class DeepSeekChatApp:
         self.nav_frame = ttk.Frame(self.root)
         self.nav_frame.grid(row=1, column=0, sticky="nswe")
 
-        # Question listbox with scrollbar
         self.nav_listbox = tk.Listbox(self.nav_frame)
         self.nav_scroll = ttk.Scrollbar(self.nav_frame, orient="vertical", command=self.nav_listbox.yview)
         self.nav_listbox.configure(yscrollcommand=self.nav_scroll.set)
@@ -93,7 +106,6 @@ class DeepSeekChatApp:
         self.chat_frame.grid_columnconfigure(0, weight=1)
         self.chat_frame.grid_rowconfigure(0, weight=1)
 
-        # Chat history display
         self.chat_history = scrolledtext.ScrolledText(
             self.chat_frame, wrap=tk.WORD, state='normal',
             font=('Arial', 10), spacing3=5
@@ -108,7 +120,6 @@ class DeepSeekChatApp:
         input_frame.grid(row=1, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
         input_frame.grid_columnconfigure(0, weight=1)
 
-        # User input with scrollbar
         self.user_input = scrolledtext.ScrolledText(
             input_frame, wrap=tk.WORD, height=3,
             font=('Arial', 10), undo=True
@@ -116,7 +127,6 @@ class DeepSeekChatApp:
         self.user_input.grid(row=0, column=0, sticky="ew")
         self.user_input.bind("<Return>", self.handle_enter_key)
 
-        # Send button
         self.send_button = ttk.Button(input_frame, text="Send", command=self.send_message)
         self.send_button.grid(row=0, column=1, padx=5, sticky="e")
 
@@ -124,7 +134,6 @@ class DeepSeekChatApp:
         control_frame = ttk.Frame(self.chat_frame)
         control_frame.grid(row=2, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
 
-        # Model selection
         ttk.Label(control_frame, text="Model:").pack(side=tk.LEFT, padx=5)
         self.model_var = tk.StringVar(value=self.available_models[0])
         self.model_select = ttk.Combobox(
@@ -133,7 +142,6 @@ class DeepSeekChatApp:
         )
         self.model_select.pack(side=tk.LEFT, padx=5)
 
-        # Temperature control
         ttk.Label(control_frame, text="Temperature:").pack(side=tk.LEFT, padx=5)
         self.temperature = tk.DoubleVar(value=0.7)
         self.temp_slider = ttk.Scale(
@@ -159,24 +167,36 @@ class DeepSeekChatApp:
         self.user_input.config(font=(new_font, 10))
 
     def export_session(self):
+        self.status_var.set("Exporting session...")
+        self.progress_bar.start()
         file_path = filedialog.asksaveasfilename(
             defaultextension=".json",
             filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
         )
         if not file_path:
+            self.progress_bar.stop()
+            self.status_var.set("Export cancelled")
             return
         try:
             with open(file_path, 'w') as f:
                 json.dump(self.conversation_history, f)
             messagebox.showinfo("Success", "Session exported successfully")
+            self.status_var.set("Session exported successfully")
         except Exception as e:
             messagebox.showerror("Error", f"Export failed: {str(e)}")
+            self.status_var.set(f"Export failed: {str(e)}")
+        finally:
+            self.progress_bar.stop()
 
     def load_session(self):
+        self.status_var.set("Loading session...")
+        self.progress_bar.start()
         file_path = filedialog.askopenfilename(
             filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
         )
         if not file_path:
+            self.progress_bar.stop()
+            self.status_var.set("Load cancelled")
             return
         try:
             with open(file_path, 'r') as f:
@@ -191,12 +211,19 @@ class DeepSeekChatApp:
                 self.nav_listbox.insert(tk.END, f"{idx}. {msg[:20]}...")
             self.display_conversation_up_to(len(self.conversation_history)-1)
             messagebox.showinfo("Success", "Session loaded successfully")
+            self.status_var.set("Session loaded successfully")
         except Exception as e:
             messagebox.showerror("Error", f"Load failed: {str(e)}")
+            self.status_var.set(f"Load failed: {str(e)}")
+        finally:
+            self.progress_bar.stop()
 
     def send_message(self):
+        self.status_var.set("Processing...")
+        self.progress_bar.start()
         user_message = self.user_input.get("1.0", tk.END).strip()
         if not user_message:
+            self.progress_bar.stop()
             return
 
         self.user_input.delete("1.0", tk.END)
@@ -210,7 +237,6 @@ class DeepSeekChatApp:
                 "Content-Type": "application/json"
             }
 
-            # Prepare messages payload
             if self.use_context_var.get():
                 messages = [
                     {"role": entry['sender'], "content": entry['message']}
@@ -231,9 +257,11 @@ class DeepSeekChatApp:
             if response.status_code == 200:
                 ai_message = response.json()['choices'][0]['message']['content']
                 self.conversation_history.append({'sender': 'assistant', 'message': ai_message})
+                self.status_var.set("Response received")
             else:
                 error_msg = f"Error {response.status_code}: {response.text}"
                 self.conversation_history.append({'sender': 'system', 'message': error_msg})
+                self.status_var.set(f"API Error: {response.status_code}")
 
             self.display_conversation_up_to(len(self.conversation_history)-1)
             self.nav_listbox.selection_clear(0, tk.END)
@@ -244,6 +272,9 @@ class DeepSeekChatApp:
             error_msg = f"Error: {str(e)}"
             self.conversation_history.append({'sender': 'system', 'message': error_msg})
             self.display_conversation_up_to(len(self.conversation_history)-1)
+            self.status_var.set(f"Error: {str(e)}")
+        finally:
+            self.progress_bar.stop()
 
     def on_nav_select(self, event):
         selected = self.nav_listbox.curselection()
@@ -272,4 +303,3 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = DeepSeekChatApp(root)
     root.mainloop()
-    
