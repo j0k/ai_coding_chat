@@ -3,28 +3,35 @@ A sleek, lightweight tool that lets you code smarter. Chat with AI to generate, 
 
 ```
 ai_coding_chat/
-    ├── LICENSE
-    ├── README.md
-    ├── api
-    │   ├── __init__.py
-    │   └── client.py       # API communication handler
-    ├── app.py              # Main application entry point
-    ├── config.ini          # Configuration file (needs to be created by user)
-    ├── config.py
-    ├── gui
-    │   ├── __init__.py
-    │   ├── chat.py         # Chat display and input components
-    │   ├── main_window.py  # Main application window and coordinator
-    │   ├── navigation.py   # Left panel with message checkboxes
-    │   ├── status_bar.py   # Bottom status indicators
-    │   └── toolbar.py      # Top toolbar controls
-    ├── main.py
-    └── utils
-        ├── __init__.py
-        └── helpers.py      # Utility functions and handlers
+.
+├── AI_PROMPTS.md
+├── CHANGELOG.md
+├── LICENSE
+├── README.md
+├── api
+│   ├── __init__.py
+│   └── client.py        # API communication handler
+├── config.ini           # Configuration file (needs to be created by user)
+├── config.py
+├── files.txt
+├── gui
+│   ├── __init__.py
+│   ├── chat.py          # Chat display and input components
+│   ├── main_window.py   # Main application window and coordinator
+│   ├── memo_panel.py
+│   ├── navigation.py    # Left panel with message checkboxes
+│   ├── status_bar.py    # Bottom status indicators
+│   └── toolbar.py       # Top toolbar controls
+├── logo.ico
+├── main.py              # Main application entry point
+├── tools
+│   └── listfiles.py
+└── utils
+    ├── __init__.py
+    └── helpers.py       # Utility functions and handlers
 ```
 
-![Screen](screen.jpg)
+![Screen](screens/screen_2025.04.23.png)
 
 # AI Coding Chat Client - Version 1.0
 

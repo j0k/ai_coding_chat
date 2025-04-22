@@ -3,6 +3,7 @@ from gui.main_window import DeepSeekChatApp
 
 def main():
     root = tk.Tk()
+    root.iconbitmap("logo.ico")
     app = DeepSeekChatApp(root)
     root.mainloop()
 

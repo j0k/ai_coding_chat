@@ -10,14 +10,16 @@ def export_session(conversation_history):
         )
         if not file_path:
             return False
-            
+
         with open(file_path, 'w') as f:
             json.dump([{
                 'sender': entry['sender'],
                 'message': entry['message'],
-                'include_in_context': entry.get('include_in_context', True)
+                'include_in_context': entry.get('include_in_context', True),
+                'timestamp': entry.get('timestamp', None),
+                '_exec_time': entry.get('_exec_time', None)  # Legacy field
             } for entry in conversation_history], f)
-            
+
         return True
     except Exception as e:
         messagebox.showerror("Export Error", f"Failed to export session: {str(e)}")
@@ -30,15 +32,19 @@ def load_session():
         )
         if not file_path:
             return None
-            
+
         with open(file_path, 'r') as f:
             data = json.load(f)
-            
+
         # Backward compatibility for old sessions
-        for entry in data:
+        for i, entry in enumerate(data):
             if 'include_in_context' not in entry:
                 entry['include_in_context'] = True
-                
+            if 'entry_id' not in entry:
+                entry['entry_id'] = f"legacy_{i}"
+            entry['timestamp'] = entry.get('timestamp', entry.get('_exec_time', None))
+            entry['_exec_time'] = entry.get('_exec_time', None)
+
         return data
     except Exception as e:
         messagebox.showerror("Load Error", f"Failed to load session: {str(e)}")

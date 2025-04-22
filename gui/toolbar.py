@@ -6,22 +6,42 @@ class Toolbar:
         self.parent = parent
         self.frame = ttk.Frame(parent)
         self._create_widgets()
-        
+
     def _create_widgets(self):
         # Export/Load buttons
         self.export_btn = ttk.Button(self.frame, text="Export Session")
         self.load_btn = ttk.Button(self.frame, text="Load Session")
-        
+
         # Font selection
-        self.font_var = tk.StringVar(value="Arial")
+        self.font_var = tk.StringVar(value="Monaco")
         self.font_combo = ttk.Combobox(
             self.frame,
             textvariable=self.font_var,
-            values=["Arial", "Courier New", "Times New Roman"],
+            values=[
+                # Windows/Mac/Linux cross-platform monospace fonts
+                "Consolas",
+                "Courier New",
+                "DejaVu Sans Mono",
+                "Liberation Mono",
+                "Monaco",
+                "Menlo",
+                "Source Code Pro",
+                "Ubuntu Mono",
+                "Roboto Mono",
+                "Fira Code",
+                "JetBrains Mono",
+                "Cascadia Code",
+                "Hack",
+                "Inconsolata",
+                "Droid Sans Mono",
+                # Fallback system fonts
+                "Monospace",
+                "Courier"
+            ],
             state="readonly",
             width=15
         )
-        
+
         # Context checkbox
         self.use_context_var = tk.BooleanVar(value=True)
         self.context_check = ttk.Checkbutton(
@@ -29,7 +49,7 @@ class Toolbar:
             text="Use Context",
             variable=self.use_context_var
         )
-        
+
         # Model selection
         self.available_models = [
             'deepseek-chat',
@@ -45,7 +65,7 @@ class Toolbar:
             state="readonly",
             width=25
         )
-        
+
         # Temperature controls
         self.temperature = tk.DoubleVar(value=0.7)
         self.temp_slider = ttk.Scale(
@@ -56,7 +76,7 @@ class Toolbar:
             orient="horizontal"
         )
         self.temp_label = ttk.Label(self.frame, text="0.7", width=4)
-        
+
         # Layout
         self.export_btn.pack(side=tk.LEFT, padx=2)
         self.load_btn.pack(side=tk.LEFT, padx=2)
@@ -65,7 +85,7 @@ class Toolbar:
         self.context_check.pack(side=tk.LEFT, padx=10)
 
         self.timeout_var = tk.BooleanVar(value=False)  # Default unchecked
-        
+
         # Add timeout checkbox
         self.timeout_check = ttk.Checkbutton(
             self.frame,
@@ -80,7 +100,16 @@ class Toolbar:
         ttk.Label(self.frame, text="Temp:").pack(side=tk.LEFT, padx=5)
         self.temp_slider.pack(side=tk.LEFT, padx=5)
         self.temp_label.pack(side=tk.LEFT, padx=5)
-        
+
+        self.memo_toggle_btn = ttk.Button(
+            self.frame,
+            text="Toggle Memo",
+            command=self.toggle_memo_panel
+        )
+        self.memo_toggle_btn.pack(side=tk.LEFT, padx=10)
+
+        self.toggle_memo_callback = None  # Initialize callback
+
         self.frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=2, pady=2)
 
     def _update_timeout_state(self):
@@ -103,6 +132,21 @@ class Toolbar:
 
     def on_temp_change(self, callback):
         self.temp_slider.config(command=lambda v: self._update_temp(v, callback))
+
+    def toggle_memo_panel(self):
+        """Handle toolbar toggle button press"""
+        if self.toggle_memo_callback:
+            self.toggle_memo_callback()
+
+    def on_toggle_memo(self, callback):
+        """Register memo toggle callback"""
+        self.toggle_memo_callback = callback
+        self.memo_toggle_btn.config(command=self._handle_toggle_memo)
+
+    def _handle_toggle_memo(self):
+        """Wrapper to safely handle toggle"""
+        if self.toggle_memo_callback:
+            self.parent.after(0, self.toggle_memo_callback)
 
     def _update_temp(self, value, callback):
         self.temp_label.config(text=f"{float(value):.1f}")
