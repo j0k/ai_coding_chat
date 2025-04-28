@@ -1,0 +1,14 @@
+{
+  "name": "Hello World Python",
+  "prompts": [
+    "Generate function documentation for Python Hello App",
+    "Create usage examples for these functions",
+    "Suggest improvements to make the code more self-documenting"
+  ],
+  "delimiter": "-----",
+  "metadata": {
+    "created": "2025-04-26T05:16:57.278737",
+    "modified": "2025-04-26T05:18:52.463241"
+  },
+  "filename": "hello_python.json"
+}

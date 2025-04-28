@@ -37,14 +37,14 @@ class DeepSeekChatApp:
         self._setup_state()
 
     def _init_ui(self):
-        self.root.title("DeepSeek Chat")
+        self.root.title("AI Coding Chat")
         self.root.geometry("1200x750")
 
         # Configure grid layout
         self.root.grid_rowconfigure(1, weight=1)
         self.root.grid_columnconfigure(0, weight=0, minsize=150)  # Navigation
         self.root.grid_columnconfigure(1, weight=1)               # Chat
-        self.root.grid_columnconfigure(2, weight=0, minsize=300)  # Memo
+        self.root.grid_columnconfigure(2, weight=0, minsize=50)  # Memo
 
         # Initialize components
         self.toolbar = Toolbar(self.root)
@@ -52,12 +52,14 @@ class DeepSeekChatApp:
         self.chat = ChatPanel(self.root)
         self.memo_panel = MemoPanel(self.root, self.chat, self.root)
         self.status_bar = StatusBar(self.root)
+        self.memo_panel.ai_flow_tab.set_status_bar(self.status_bar)
 
         # Grid placement
         self.toolbar.frame.grid(row=0, column=0, columnspan=3, sticky="ew")
         self.navigation.frame.grid(row=1, column=0, sticky="nswe")
         self.chat.frame.grid(row=1, column=1, sticky="nswe")
-        self.memo_panel.frame.grid(row=1, column=2, sticky="nswe")
+        #self.memo_panel.frame.grid(row=1, column=2, sticky="nswe")
+        self.memo_panel.frame.grid(row=1, column=2, sticky="ns")
         self.status_bar.frame.grid(row=2, column=0, columnspan=3, sticky="ew")
 
     def _setup_threading(self):

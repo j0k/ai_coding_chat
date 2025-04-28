@@ -1,0 +1,12 @@
+{
+  "name": "Code Review Assistant",
+  "version": "1.0",
+  "author": "Yuri Konoplev (with Deepseek)",
+  "prompts": [
+    "Please analyze this Python code for potential bugs and security issues:",
+    "For each bug you identified, suggest a fixed version of the code",
+    "Now suggest performance optimizations for this code",
+    "Finally, recommend best practices that could make this code more maintainable"
+  ],
+  "delimiter": "-----"
+}

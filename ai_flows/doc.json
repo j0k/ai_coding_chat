@@ -1,0 +1,13 @@
+{
+  "name": "Documentation Generator",
+  "description": "Generates documentation for Python code",
+  "version": "1.0",
+  "author": "Yuri Konoplev (with Deepseek)",
+  "prompts": [
+    "Generate function documentation for this code:",
+    "Create usage examples for these functions",
+    "Suggest improvements to make the code more self-documenting"
+  ],
+  "delimiter": "-----",
+  "default_delay": 1.5
+}

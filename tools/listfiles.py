@@ -44,17 +44,20 @@ def list_files(start_dir, included_exts, onlyfilenames=False, onlyexcludedfilena
             try:
                 with open(full_path, 'r', encoding='utf-8') as f:
                     content = f.read()
+                    print(f"{rel_path}")
+                    print("=" * 23)
+                    lines = content.splitlines()
+                    for line in lines:
+                        print(line)                    
+                    print("=" * 23)
+                    print()  # Add empty line between files
             except UnicodeDecodeError:
                 content = "[Binary content omitted]"
             except Exception as e:
                 content = f"[Error reading file: {str(e)}]"
 
-            # Format output
-            print(f"{rel_path}")
-            print("=" * 23)
-            print(content.rstrip('\n'))
-            print("=" * 23)
-            print()  # Add empty line between files
+
+
 
 def valid_directory(path):
     """Argparse validator for directory paths"""

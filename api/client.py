@@ -20,6 +20,8 @@ class APIClient:
             "temperature": temperature
         }
 
+        print("\n\n",model, payload)
+
         with self._lock:  # Ensure thread-safe API calls
             try:
                 response = requests.post(
