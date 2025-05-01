@@ -107,10 +107,33 @@ class Toolbar:
             command=self.toggle_memo_panel
         )
         self.memo_toggle_btn.pack(side=tk.LEFT, padx=10)
-
         self.toggle_memo_callback = None  # Initialize callback
 
+        self.terminal_btn = ttk.Button(
+            self.frame,
+            text="Terminal ▼",
+            command=self._handle_terminal_toggle
+        )
+        self.terminal_btn.pack(side=tk.LEFT, padx=5)
+
+        self.terminal_toggle_callback = None
+
         self.frame.grid(row=0, column=0, columnspan=2, sticky="ew", padx=2, pady=2)
+
+    def on_toggle_terminal(self, callback):
+        """Register terminal toggle callback"""
+        self.terminal_toggle_callback = callback
+        self.terminal_btn.config(command=self._handle_terminal_toggle)
+
+    def _handle_terminal_toggle(self):
+        """Wrapper for thread-safe terminal toggle"""
+        if self.terminal_toggle_callback:
+            self.parent.after(0, self.terminal_toggle_callback)
+
+    def update_terminal_button(self, is_visible):
+        """Update button text based on terminal state"""
+        text = "Terminal ▲" if is_visible else "Terminal ▼"
+        self.terminal_btn.config(text=text)
 
     def _update_timeout_state(self):
         """Handle timeout checkbox changes"""

@@ -31,7 +31,7 @@ ai_coding_chat/
     └── helpers.py       # Utility functions and handlers
 ```
 
-![Screen](screens/screen_2025.04.23.png)
+![Screen](screens/screen_2025.05.01.png)
 
 # AI Coding Chat Client - Version 1.0
 
@@ -91,14 +91,34 @@ ai_coding_chat/
   - Asynchronous API handling
   - Cross-platform compatibility
 
+## IPython Terminal Integration
+
+The application features an embedded IPython console with these capabilities:
+
+### IPython Key Features
+  - **Full Python REPL** - Execute any Python code directly
+  - **Application Access** - Use `app` to interact with the GUI:
+    ```python
+    >>> app.conversation_history[-1]  # View chat history
+    >>> app.send("message")      # Send messages programmatically
+    ```
+  - **Rich Output** - Supports:
+    - `print()` statements
+    - Expression results
+    - List comprehensions
+    - Magic commands (`%timeit`, `%debug`, etc.) are in TODO list
+
+  ### Keyboard Shortcuts
+  - `Ctrl+T` - Toggle terminal visibility
+  - `Shift+Enter` - Multi-line input in TODO list
+  - `Tab` - Auto-completion in TODO list
+
 ## Usage Scenarios
 1. Technical support conversations
 2. Programming assistance
 3. Mathematical problem solving
 4. Research and reasoning tasks
 5. Persistent conversation analysis
-
-
 
 - Python 3.8+
 - Packages:

@@ -49,7 +49,7 @@ class DeepSeekChatApp:
         # Initialize components
         self.toolbar = Toolbar(self.root)
         self.navigation = NavigationPanel(self.root)
-        self.chat = ChatPanel(self.root)
+        self.chat = ChatPanel(self.root, self)
         self.memo_panel = MemoPanel(self.root, self.chat, self.root)
         self.status_bar = StatusBar(self.root)
         self.memo_panel.ai_flow_tab.set_status_bar(self.status_bar)
@@ -75,6 +75,11 @@ class DeepSeekChatApp:
         finally:
             self.root.after(100, self._process_message_queue)
 
+    def _handle_terminal_toggle(self):
+        """Handle terminal toggle from toolbar"""
+        self.chat.toggle_terminal()
+        self.toolbar.update_terminal_button(self.chat.terminal_visible)
+
     def _bind_events(self):
         # Toolbar events
         self.toolbar.on_export(self.handle_export)
@@ -82,6 +87,12 @@ class DeepSeekChatApp:
         self.toolbar.on_font_change(lambda font: self.chat.update_font(font))
         self.toolbar.on_temp_change(self.handle_temp_change)
         self.toolbar.on_timeout_change(self.handle_timeout_change)
+        self.toolbar.on_toggle_terminal(self._handle_terminal_toggle)
+
+        # self.chat.toggle_terminal = lambda: (
+        #     ChatPanel.toggle_terminal(self.chat),
+        #     update_terminal_button()
+        # )
 
         # Navigation events
         self.navigation.on_context_update(self._handle_context_update)
@@ -89,6 +100,7 @@ class DeepSeekChatApp:
 
         # Chat events
         self.chat.on_send(self.handle_message_send)
+
 
     def _send_message_async(self, message, user_message_id):
         """Handle the async message sending and response processing"""
